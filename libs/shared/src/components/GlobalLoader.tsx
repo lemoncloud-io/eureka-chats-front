@@ -25,12 +25,9 @@ export const GlobalLoader: React.FC = () => {
     }
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/80 backdrop-blur-sm">
-            <div className="glass-strong p-6 rounded-xl shadow-lg">
-                <div className="flex flex-col items-center space-y-3">
-                    <Loader2 className="h-8 w-8 animate-spin text-foreground/80" />
-                    <div className="text-sm font-medium text-foreground/90">Loading...</div>
-                </div>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/10 backdrop-blur-sm">
+            <div className="flex flex-col items-center space-y-3">
+                <Loader2 className="h-8 w-8 animate-spin text-foreground/80" />
             </div>
         </div>,
         document.body
