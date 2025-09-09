@@ -103,6 +103,11 @@
             "reconnecting": "Reconnecting",
             "disconnected": "Disconnected",
             "error": "Error"
+        },
+        "systemMessages": {
+            "joined": "joined the chat.",
+            "left": "left the chat.",
+            "userAction": "{{userName}} {{action}}"
         }
     },
     "profile": {
