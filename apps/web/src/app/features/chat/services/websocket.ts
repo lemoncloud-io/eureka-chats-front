@@ -15,10 +15,9 @@ export class ChatWebSocketServiceV2 {
     private pingInterval: NodeJS.Timeout | null = null;
     private isManualDisconnect = false;
 
-    connect(channelId: string) {
+    connect(channelId: string, identityToken?: string) {
         this.channelId = channelId;
-        // this.token = token;
-        const wsUrl = `${SOCKET_ENDPOINT}?channels=${channelId}`;
+        const wsUrl = `${SOCKET_ENDPOINT}?channels=${channelId}&x-lemon-identity=${identityToken || ''}`;
         console.log(wsUrl);
         this.ws = new WebSocket(wsUrl);
 
