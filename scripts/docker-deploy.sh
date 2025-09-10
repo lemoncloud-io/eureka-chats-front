@@ -4,7 +4,7 @@ set -euo pipefail
 # Constants
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-DOCKER_IMAGE_NAME="codes-front-sample"
+DOCKER_IMAGE_NAME="eureka-chats-front"
 DOCKER_IMAGE_TAG="prod"
 
 # Functions
@@ -48,7 +48,7 @@ validate_arguments() {
 
 get_env_file() {
     local deploy_env="${1:-}"
-    
+
     if [ -n "$deploy_env" ]; then
         echo "${PROJECT_ROOT}/.env.docker.${deploy_env}"
     else
@@ -58,7 +58,7 @@ get_env_file() {
 
 validate_env_file() {
     local env_file="$1"
-    
+
     if [ ! -f "${env_file}" ]; then
         log_error "Environment file ${env_file} not found"
         if [[ "$env_file" == *".env.docker.dev" ]] || [[ "$env_file" == *".env.docker.prod" ]]; then
@@ -79,19 +79,19 @@ load_env_variables() {
 
 validate_required_vars() {
     local deploy_env="${1:-}"
-    
+
     # Override AWS_DEPLOY_TARGET if environment is specified
     if [ -n "$deploy_env" ]; then
         export AWS_DEPLOY_TARGET="$deploy_env"
         log_info "Override AWS_DEPLOY_TARGET to: $deploy_env"
     fi
-    
+
     # If no environment specified and no AWS_DEPLOY_TARGET, deploy to root
     if [ -z "${AWS_DEPLOY_TARGET:-}" ]; then
         export AWS_DEPLOY_TARGET=""
         log_info "No environment specified - deploying to root bucket"
     fi
-    
+
     local required_vars=(
         "AWS_BUCKET_NAME"
         "AWS_ACCESS_KEY_ID"
@@ -101,6 +101,8 @@ validate_required_vars() {
         "VITE_PROJECT"
         "VITE_HOST"
         "VITE_OAUTH_ENDPOINT"
+        "VITE_SOCKET_ENDPOINT"
+        "VITE_CHAT_API_ENDPOINT"
     )
 
     for var in "${required_vars[@]}"; do
@@ -109,7 +111,7 @@ validate_required_vars() {
             exit 1
         fi
     done
-    
+
     # CloudFront distribution ID is optional
     if [ -n "${AWS_DISTRIBUTION_ID:-}" ]; then
         log_info "CloudFront invalidation will be performed"
@@ -148,7 +150,7 @@ clean_build_artifacts() {
 build_docker_image() {
     local deploy_env="${1:-}"
     local build_env
-    
+
     # Determine build environment
     if [ -n "$deploy_env" ]; then
         build_env="$deploy_env"
@@ -191,15 +193,15 @@ deploy_with_docker() {
         "-e" "AWS_DEPLOY_TARGET=$AWS_DEPLOY_TARGET"
         "-e" "APP_NAME=$APP_NAME"
     )
-    
+
     # Add CloudFront distribution ID only if it's set
     if [ -n "${AWS_DISTRIBUTION_ID:-}" ]; then
         docker_cmd+=("-e" "AWS_DISTRIBUTION_ID=$AWS_DISTRIBUTION_ID")
     fi
-    
+
     # Add image and command
     docker_cmd+=("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}" "/app/scripts/docker-entrypoint-deploy.sh")
-    
+
     if ! "${docker_cmd[@]}"; then
         log_error "Docker deployment failed"
         exit 1
@@ -212,17 +214,17 @@ deploy_with_docker() {
 main() {
     local deploy_env="${1:-}"
     local env_file
-    
+
     # Validate arguments and get environment file
     validate_arguments "$@"
     env_file=$(get_env_file "$deploy_env")
-    
+
     # Setup and validation
     validate_env_file "$env_file"
     load_env_variables "$env_file"
     validate_required_vars "$deploy_env"
     print_deployment_info
-    
+
     # Build and deploy
     clean_build_artifacts
     build_docker_image "$deploy_env"
