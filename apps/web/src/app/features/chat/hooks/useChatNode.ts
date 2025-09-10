@@ -27,6 +27,7 @@ export const useChatNode = () => {
     const [messages, setMessages] = useState<SocketResponse<ClientChatMessageInfo>[]>([]);
     const [isJoining, setIsJoining] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const wsService = useRef<ChatWebSocketServiceV2 | null>(null);
     const hasEnteredRoom = useRef(false);
     const nodeIdRef = useRef<string | null>(null);
@@ -41,11 +42,16 @@ export const useChatNode = () => {
             if (hasEnteredRoom.current || isJoining) return;
 
             setIsJoining(true);
+            setError(null);
             try {
                 const node = await enterRoom({ name: nickname });
 
                 if (!node.room$ || !node.room$.channelId) {
                     throw new Error('Invalid node response');
+                }
+
+                if (!node.Token?.identityToken) {
+                    throw new Error('Identity token is missing from node response');
                 }
 
                 setNode({ ...node, nickname });
@@ -100,6 +106,10 @@ export const useChatNode = () => {
                 hasEnteredRoom.current = true;
 
                 return node;
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : 'Failed to join room';
+                setError(errorMessage);
+                throw error;
             } finally {
                 setIsJoining(false);
             }
@@ -219,5 +229,6 @@ export const useChatNode = () => {
         isConnected: connectionStatus === 'connected',
         isJoining,
         isLeaving,
+        error,
     };
 };
