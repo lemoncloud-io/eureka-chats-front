@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useEnterRoom, useLeaveRoom, useUpdateNode } from '@lemon/chats';
 import { CHAT_API_ENDPOINT } from '@lemon/web-core';
@@ -18,6 +19,7 @@ export interface ClientChatMessageInfo extends ChatMessageInfo {
 }
 
 export const useChatNode = () => {
+    const { t } = useTranslation();
     const [node, setNode] = useState<(NodeView & { nickname?: string }) | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<
         'connecting' | 'connected' | 'disconnected' | 'error' | 'reconnecting'
@@ -71,12 +73,18 @@ export const useChatNode = () => {
                         if (messageData?.action === 'join' || messageData?.action === 'leave') {
                             const currentConnectionId = wsService.current?.getConnectionId();
                             if (messageData.author !== currentConnectionId) {
-                                const actionText = messageData.action === 'join' ? '입장했습니다.' : '퇴장했습니다.';
+                                const actionText =
+                                    messageData.action === 'join'
+                                        ? t('chat.systemMessages.joined')
+                                        : t('chat.systemMessages.left');
                                 const systemMessage = {
                                     ...socketResponse,
                                     data: {
                                         ...messageData,
-                                        message: `${messageData.authorName || '익명'}님이 ${actionText}`,
+                                        message: t('chat.systemMessages.userAction', {
+                                            userName: messageData.authorName || t('chat.anonymousUser'),
+                                            action: actionText,
+                                        }),
                                         isSystemMessage: true,
                                     },
                                 };

@@ -103,7 +103,13 @@
             "reconnecting": "재연결 중",
             "disconnected": "연결 끊김",
             "error": "오류"
-        }
+        },
+        "systemMessages": {
+            "joined": "입장했습니다.",
+            "left": "퇴장했습니다.",
+            "userAction": "{{userName}}님이 {{action}}"
+        },
+        "disconnectedMessage": "연결되지 않아 메시지를 보낼 수 없습니다"
     },
     "profile": {
         "editTitle": "프로필 수정",
