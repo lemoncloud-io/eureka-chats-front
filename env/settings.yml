@@ -1,0 +1,80 @@
+# eureka-backend-cdk env settings
+#-----------------------------------
+# environ
+#-----------------------------------
+environ:
+    VITE_ENV:
+        scope: env
+        name: VITE_ENV
+        isRequired: 1
+        type: string
+        description: 'Execution environment (DEV or PROD)'
+        isArray: 0
+        options: "['DEV','PROD']"
+        redeploy: 1
+        immutable: 1
+    VITE_PROJECT:
+        scope: env
+        name: VITE_PROJECT
+        isRequired: 1
+        type: string
+        description: 'Service/project identifier'
+        isArray: 0
+        immutable: 0
+    VITE_OAUTH_ENDPOINT:
+        scope: env
+        name: VITE_OAUTH_ENDPOINT
+        isRequired: 0
+        type: string
+        description: 'OAuth authorization server endpoint (not required by current spec; may be added later)'
+        isArray: 0
+        redeploy: 1
+        immutable: 0
+    VITE_SOCIAL_OAUTH_ENDPOINT:
+        scope: env
+        name: VITE_SOCIAL_OAUTH_ENDPOINT
+        isRequired: 1
+        type: string
+        description: 'Social OAuth authorization server endpoint'
+        isArray: 0
+        redeploy: 1
+        immutable: 0
+    VITE_IMAGE_API_ENDPOINT:
+        scope: env
+        name: VITE_IMAGE_API_ENDPOINT
+        isRequired: 1
+        type: string
+        description: 'Image API server endpoint'
+        isArray: 0
+        redeploy: 1
+        immutable: 0
+    VITE_CHAT_API_ENDPOINT:
+        scope: env
+        name: VITE_CHAT_API_ENDPOINT
+        isRequired: 1
+        type: string
+        description: 'Chat API server endpoint'
+        isArray: 0
+        redeploy: 1
+        immutable: 0
+    VITE_HOST:
+        scope: env
+        name: VITE_HOST
+        isRequired: 1
+        type: string
+        description: 'Public service host address (Origin)'
+        isArray: 0
+        redeploy: 1
+        immutable: 1
+    VITE_SOCKET_ENDPOINT:
+        scope: env
+        name: VITE_SOCKET_ENDPOINT
+        isRequired: 1
+        type: string
+        description: 'Realtime communication (WebSocket) server endpoint'
+        isArray: 0
+        redeploy: 1
+        immutable: 0
+#-----------------------------------
+# config
+#-----------------------------------
