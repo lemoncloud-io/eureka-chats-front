@@ -58,8 +58,8 @@ When you deploy Eureka Chats through the [EurekaCodes platform](https://eureka.c
 ## Screenshots
 
 <div align="center">
-  <img src="images/join-chat.jpg" alt="Chat Room Entry" width="45%" />
-  <img src="images/active-chat.jpg" alt="Active Chat" width="45%" />
+  <img src="images/join-chat.JPG" alt="Chat Room Entry" width="45%" />
+  <img src="images/active-chat.JPG" alt="Active Chat" width="45%" />
 </div>
 
 ## Tech Stack

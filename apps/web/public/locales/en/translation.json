@@ -103,7 +103,13 @@
             "reconnecting": "Reconnecting",
             "disconnected": "Disconnected",
             "error": "Error"
-        }
+        },
+        "systemMessages": {
+            "joined": "joined the chat.",
+            "left": "left the chat.",
+            "userAction": "{{userName}} {{action}}"
+        },
+        "disconnectedMessage": "Cannot send messages while disconnected"
     },
     "profile": {
         "editTitle": "Edit Profile",

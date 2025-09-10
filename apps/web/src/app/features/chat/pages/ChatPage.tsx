@@ -41,7 +41,11 @@ export const ChatPage = () => {
                     />
                 </div>
 
-                <MessageInput onSendMessage={sendHttpMessage} isSending={isSending} />
+                <MessageInput
+                    onSendMessage={sendHttpMessage}
+                    isSending={isSending}
+                    isDisabled={connectionStatus !== 'connected'}
+                />
             </div>
         </AppLayout>
     );
