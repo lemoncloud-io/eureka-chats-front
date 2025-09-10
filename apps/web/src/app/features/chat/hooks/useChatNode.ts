@@ -96,7 +96,7 @@ export const useChatNode = () => {
                     }
                 });
 
-                wsService.current.connect(node.room$.channelId);
+                wsService.current.connect(node.room$.channelId, node.Token?.identityToken);
                 hasEnteredRoom.current = true;
 
                 return node;

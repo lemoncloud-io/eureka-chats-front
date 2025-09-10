@@ -1,6 +1,14 @@
 import { CHAT_API_ENDPOINT, webCore } from '@lemon/web-core';
 
-import type { ChatBody, ChatView, NodeBody, NodeView, RoomBody, RoomView } from '@lemoncloud/eureka-chats-api';
+import type {
+    ChatBody,
+    ChatView,
+    NodeBody,
+    NodeView,
+    RoomBody,
+    RoomView,
+    UserTokenView,
+} from '@lemoncloud/eureka-chats-api';
 
 export const createRoom = async (body: RoomBody) => {
     const { data } = await webCore
@@ -30,11 +38,10 @@ export const enterRoom = async (body: NodeBody) => {
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
-            baseURL: `${CHAT_API_ENDPOINT}/public/start-chat`,
+            baseURL: `${CHAT_API_ENDPOINT}/public/start-chat?token`,
         })
-        .setParams({ token: 0 })
         .setBody(body)
-        .execute<NodeView>();
+        .execute<UserTokenView>();
 
     return data;
 };
