@@ -57,6 +57,7 @@ environ:
         isArray: 0
         redeploy: 1
         immutable: 0
+        value: '@eureka-chats-api/output.apiId'
     VITE_HOST:
         scope: env
         name: VITE_HOST
@@ -75,6 +76,7 @@ environ:
         isArray: 0
         redeploy: 1
         immutable: 0
+        value: '@eureka-sockets-api/output.socketArn'
 #-----------------------------------
 # config
 #-----------------------------------
