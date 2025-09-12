@@ -6,21 +6,23 @@ environ:
     VITE_ENV:
         scope: env
         name: VITE_ENV
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Execution environment (DEV or PROD)'
         isArray: 0
         options: "['DEV','PROD']"
         redeploy: 1
         immutable: 1
+        defaultValue: 'DEV'
     VITE_PROJECT:
         scope: env
         name: VITE_PROJECT
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Service/project identifier'
         isArray: 0
         immutable: 0
+        defaultValue: 'EUREKA_CHATS_FRONT'
     VITE_OAUTH_ENDPOINT:
         scope: env
         name: VITE_OAUTH_ENDPOINT
@@ -30,38 +32,41 @@ environ:
         isArray: 0
         redeploy: 1
         immutable: 0
+        defaultValue: 'https://api.eureka.codes/d1'
     VITE_SOCIAL_OAUTH_ENDPOINT:
         scope: env
         name: VITE_SOCIAL_OAUTH_ENDPOINT
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Social OAuth authorization server endpoint'
         isArray: 0
         redeploy: 1
         immutable: 0
+        defaultValue: 'https://oauth2.eureka.codes'
     VITE_IMAGE_API_ENDPOINT:
         scope: env
         name: VITE_IMAGE_API_ENDPOINT
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Image API server endpoint'
         isArray: 0
         redeploy: 1
         immutable: 0
+        defaultValue: 'https://image.lemoncloud.io'
     VITE_CHAT_API_ENDPOINT:
         scope: env
         name: VITE_CHAT_API_ENDPOINT
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Chat API server endpoint'
         isArray: 0
         redeploy: 1
         immutable: 0
-        value: '@eureka-chats-api/output.apiId'
+        value: '@eureka-chats-api/output.endpoint'
     VITE_HOST:
         scope: env
         name: VITE_HOST
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Public service host address (Origin)'
         isArray: 0
@@ -70,13 +75,38 @@ environ:
     VITE_SOCKET_ENDPOINT:
         scope: env
         name: VITE_SOCKET_ENDPOINT
-        isRequired: 1
+        isRequired: 0
         type: string
         description: 'Realtime communication (WebSocket) server endpoint'
         isArray: 0
         redeploy: 1
         immutable: 0
-        value: '@eureka-sockets-api/output.socketArn'
+        value: '@eureka-sockets-api/output.socketEndpoint'
+    AWS_REGION:
+        scope: env
+        name: AWS_REGION
+        isRequired: 0
+        type: string
+        description: 'AWS region'
+        isArray: 0
+        immutable: 1
+        defaultValue: 'ap-northeast-2'
+    AWS_DEPLOY_TARGET:
+        scope: env
+        name: AWS_DEPLOY_TARGET
+        isRequired: 0
+        type: string
+        description: 'AWS deploy target stage'
+        isArray: 0
+        immutable: 1
+    AWS_DISTRIBUTION_ID:
+        scope: env
+        name: AWS_DISTRIBUTION_ID
+        isRequired: 0
+        type: string
+        description: 'AWS distribution id'
+        isArray: 0
+        immutable: 1
 #-----------------------------------
 # config
 #-----------------------------------
