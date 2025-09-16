@@ -169,14 +169,11 @@ export const useChatNode = () => {
     useEffect(() => {
         const leaveRoomBeacon = (nodeId: string) => {
             try {
-                // Validate environment variable before using it
                 validateChatApiEndpoint();
 
-                // 쿼리스트링에 nodeId만 실어 보냄 (응답은 안 기다림)
                 const url = `${CHAT_API_ENDPOINT}/public/leave-chat?nodeId=${encodeURIComponent(nodeId)}`;
-                const payload = JSON.stringify({}); // 서버가 body 필요없으면 빈 객체로
+                const payload = JSON.stringify({});
 
-                // 1) 즉시 WebSocket 닫기 (동기)
                 try {
                     wsService.current?.disconnect?.();
                     wsService.current = null;
@@ -184,23 +181,20 @@ export const useChatNode = () => {
                     // Ignore disconnect errors
                 }
 
-                // 2) 언로드에서도 전송 가능한 방식으로 신호 보내기
                 if (navigator.sendBeacon) {
                     const blob = new Blob([payload], { type: 'application/json' });
                     navigator.sendBeacon(url, blob);
                 } else {
-                    // 구형 브라우저 폴백
                     fetch(url, {
                         method: 'POST',
                         body: payload,
                         headers: { 'Content-Type': 'application/json' },
-                        keepalive: true, // 언로드 중에도 시도
+                        keepalive: true,
                     });
                 }
             } catch (err) {
                 console.error('[CHAT] leaveRoomBeacon failed', err);
 
-                // Show toast for environment variable errors
                 if (err instanceof EnvironmentVariableError) {
                     toast.error('Chat service configuration error. Unable to properly disconnect.');
                 }

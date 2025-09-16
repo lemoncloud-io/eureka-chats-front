@@ -19,7 +19,6 @@ export class ChatWebSocketServiceV2 {
 
     connect(channelId: string, identityToken?: string) {
         try {
-            // Validate environment variables before connection
             validateSocketEndpoint();
 
             this.channelId = channelId;
@@ -29,7 +28,6 @@ export class ChatWebSocketServiceV2 {
         } catch (error) {
             console.error('[WEBSOCKET-V2] Connection failed:', error);
 
-            // Show user-friendly toast message for environment variable errors
             if (error instanceof EnvironmentVariableError) {
                 toast.error('Chat service configuration error. Please check your environment settings.');
             } else {

@@ -21,7 +21,6 @@ export const roomKeys = createQueryKeys('room');
 
 export type ServerError = AxiosError<string>;
 
-// Common error handler for chat operations
 const handleChatError = (error: unknown) => {
     if (error instanceof EnvironmentVariableError) {
         toast.error('Chat service configuration error. Please check your environment settings.');
