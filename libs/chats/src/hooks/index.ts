@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { createQueryKeys, useCustomMutation } from '@lemon/shared';
+import { EnvironmentVariableError } from '@lemon/web-core';
 
 import { createRoom, enterRoom, fetchRoom, leaveRoom, sendMessage, updateNode } from '../apis';
 
@@ -20,15 +21,25 @@ export const roomKeys = createQueryKeys('room');
 
 export type ServerError = AxiosError<string>;
 
+// Common error handler for chat operations
+const handleChatError = (error: unknown) => {
+    if (error instanceof EnvironmentVariableError) {
+        toast.error('Chat service configuration error. Please check your environment settings.');
+    } else if (error && typeof error === 'object' && 'response' in error) {
+        const serverError = error as ServerError;
+        toast.error(serverError.response?.data ?? 'An unknown error occurred');
+    } else {
+        toast.error('An unexpected error occurred. Please try again.');
+    }
+};
+
 export const useCreateRoom = () => {
     return useCustomMutation<RoomView, ServerError, RoomBody>(
         (body: RoomBody) => {
             return createRoom(body);
         },
         {
-            onError: error => {
-                toast.error(error.response?.data ?? 'An unknown error occurred');
-            },
+            onError: handleChatError,
         }
     );
 };
@@ -39,9 +50,7 @@ export const useEnterRoom = () => {
             return enterRoom(body);
         },
         {
-            onError: error => {
-                toast.error(error.response?.data ?? 'An unknown error occurred');
-            },
+            onError: handleChatError,
         }
     );
 };
@@ -52,9 +61,7 @@ export const useSendMessage = () => {
             return sendMessage(body);
         },
         {
-            onError: error => {
-                toast.error(error.response?.data ?? 'An unknown error occurred');
-            },
+            onError: handleChatError,
         }
     );
 };
@@ -65,9 +72,7 @@ export const useLeaveRoom = () => {
             return leaveRoom(nodeId);
         },
         {
-            onError: error => {
-                toast.error(error.response?.data ?? 'An unknown error occurred');
-            },
+            onError: handleChatError,
         }
     );
 };
@@ -87,9 +92,7 @@ export const useUpdateNode = () => {
             return updateNode(nodeId, connectionId);
         },
         {
-            onError: error => {
-                toast.error(error.response?.data ?? 'An unknown error occurred');
-            },
+            onError: handleChatError,
         }
     );
 };

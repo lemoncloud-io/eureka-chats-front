@@ -37,6 +37,24 @@ export const CHAT_API_ENDPOINT = (
 ).toLowerCase();
 export const SOCKET_ENDPOINT = (window.SOCKET_ENDPOINT || import.meta.env.VITE_SOCKET_ENDPOINT || '').toLowerCase();
 
+// Environment variable validation functions
+export class EnvironmentVariableError extends Error {
+    constructor(varName: string) {
+        super(`Environment variable ${varName} is required but not set or empty`);
+        this.name = 'EnvironmentVariableError';
+    }
+}
+
+const validateEnvVar = (varName: string, value: string) => {
+    if (!value || value.trim() === '') {
+        throw new EnvironmentVariableError(varName);
+    }
+    return value;
+};
+
+export const validateChatApiEndpoint = () => validateEnvVar('CHAT_API_ENDPOINT', CHAT_API_ENDPOINT);
+export const validateSocketEndpoint = () => validateEnvVar('SOCKET_ENDPOINT', SOCKET_ENDPOINT);
+
 /**
  * Key for storing language preference
  */

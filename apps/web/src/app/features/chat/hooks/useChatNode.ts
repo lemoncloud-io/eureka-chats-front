@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { toast } from 'sonner';
+
 import { useEnterRoom, useLeaveRoom, useUpdateNode } from '@lemon/chats';
-import { CHAT_API_ENDPOINT } from '@lemon/web-core';
+import { CHAT_API_ENDPOINT, EnvironmentVariableError, validateChatApiEndpoint } from '@lemon/web-core';
 
 import { ChatWebSocketServiceV2 } from '../services/websocket';
 
@@ -167,6 +169,9 @@ export const useChatNode = () => {
     useEffect(() => {
         const leaveRoomBeacon = (nodeId: string) => {
             try {
+                // Validate environment variable before using it
+                validateChatApiEndpoint();
+
                 // 쿼리스트링에 nodeId만 실어 보냄 (응답은 안 기다림)
                 const url = `${CHAT_API_ENDPOINT}/public/leave-chat?nodeId=${encodeURIComponent(nodeId)}`;
                 const payload = JSON.stringify({}); // 서버가 body 필요없으면 빈 객체로
@@ -194,6 +199,11 @@ export const useChatNode = () => {
                 }
             } catch (err) {
                 console.error('[CHAT] leaveRoomBeacon failed', err);
+
+                // Show toast for environment variable errors
+                if (err instanceof EnvironmentVariableError) {
+                    toast.error('Chat service configuration error. Unable to properly disconnect.');
+                }
             }
         };
 
