@@ -1,5 +1,7 @@
 import { WebCoreFactory } from '@lemoncloud/lemon-web-core';
 
+import { validateEnvVar } from '../utils';
+
 declare global {
     interface Window {
         ENV?: string;
@@ -36,6 +38,9 @@ export const CHAT_API_ENDPOINT = (
     ''
 ).toLowerCase();
 export const SOCKET_ENDPOINT = (window.SOCKET_ENDPOINT || import.meta.env.VITE_SOCKET_ENDPOINT || '').toLowerCase();
+
+export const validateChatApiEndpoint = () => validateEnvVar('CHAT_API_ENDPOINT', CHAT_API_ENDPOINT);
+export const validateSocketEndpoint = () => validateEnvVar('SOCKET_ENDPOINT', SOCKET_ENDPOINT);
 
 /**
  * Key for storing language preference

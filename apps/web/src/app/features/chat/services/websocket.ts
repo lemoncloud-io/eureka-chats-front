@@ -1,4 +1,6 @@
-import { SOCKET_ENDPOINT } from '@lemon/web-core';
+import { toast } from 'sonner';
+
+import { EnvironmentVariableError, SOCKET_ENDPOINT, validateSocketEndpoint } from '@lemon/web-core';
 
 import type { SocketPayload, SocketResponse } from '@lemoncloud/eureka-sockets-api';
 
@@ -15,12 +17,26 @@ export class ChatWebSocketServiceV2 {
     private pingInterval: NodeJS.Timeout | null = null;
     private isManualDisconnect = false;
 
-    connect(channelId: string) {
-        this.channelId = channelId;
-        // this.token = token;
-        const wsUrl = `${SOCKET_ENDPOINT}?channels=${channelId}`;
-        console.log(wsUrl);
-        this.ws = new WebSocket(wsUrl);
+    connect(channelId: string, identityToken?: string) {
+        try {
+            validateSocketEndpoint();
+
+            this.channelId = channelId;
+            const wsUrl = `${SOCKET_ENDPOINT}?channels=${channelId}&x-lemon-identity=${identityToken || ''}`;
+            console.log(wsUrl);
+            this.ws = new WebSocket(wsUrl);
+        } catch (error) {
+            console.error('[WEBSOCKET-V2] Connection failed:', error);
+
+            if (error instanceof EnvironmentVariableError) {
+                toast.error('Chat service configuration error. Please check your environment settings.');
+            } else {
+                toast.error('Failed to connect to chat service. Please try again.');
+            }
+
+            this.connectionCallback?.('error');
+            throw error;
+        }
 
         this.ws.onopen = () => {
             console.log('[WEBSOCKET-V2] Connected');

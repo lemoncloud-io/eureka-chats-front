@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { toast } from 'sonner';
+
 import { useEnterRoom, useLeaveRoom, useUpdateNode } from '@lemon/chats';
-import { CHAT_API_ENDPOINT } from '@lemon/web-core';
+import { CHAT_API_ENDPOINT, EnvironmentVariableError, validateChatApiEndpoint } from '@lemon/web-core';
 
 import { ChatWebSocketServiceV2 } from '../services/websocket';
 
@@ -27,6 +29,7 @@ export const useChatNode = () => {
     const [messages, setMessages] = useState<SocketResponse<ClientChatMessageInfo>[]>([]);
     const [isJoining, setIsJoining] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const wsService = useRef<ChatWebSocketServiceV2 | null>(null);
     const hasEnteredRoom = useRef(false);
     const nodeIdRef = useRef<string | null>(null);
@@ -41,11 +44,16 @@ export const useChatNode = () => {
             if (hasEnteredRoom.current || isJoining) return;
 
             setIsJoining(true);
+            setError(null);
             try {
                 const node = await enterRoom({ name: nickname });
 
                 if (!node.room$ || !node.room$.channelId) {
                     throw new Error('Invalid node response');
+                }
+
+                if (!node.Token?.identityToken) {
+                    throw new Error('Identity token is missing from node response');
                 }
 
                 setNode({ ...node, nickname });
@@ -96,10 +104,14 @@ export const useChatNode = () => {
                     }
                 });
 
-                wsService.current.connect(node.room$.channelId);
+                wsService.current.connect(node.room$.channelId, node.Token?.identityToken);
                 hasEnteredRoom.current = true;
 
                 return node;
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : 'Failed to join room';
+                setError(errorMessage);
+                throw error;
             } finally {
                 setIsJoining(false);
             }
@@ -157,11 +169,11 @@ export const useChatNode = () => {
     useEffect(() => {
         const leaveRoomBeacon = (nodeId: string) => {
             try {
-                // 쿼리스트링에 nodeId만 실어 보냄 (응답은 안 기다림)
-                const url = `${CHAT_API_ENDPOINT}/public/leave-chat?nodeId=${encodeURIComponent(nodeId)}`;
-                const payload = JSON.stringify({}); // 서버가 body 필요없으면 빈 객체로
+                validateChatApiEndpoint();
 
-                // 1) 즉시 WebSocket 닫기 (동기)
+                const url = `${CHAT_API_ENDPOINT}/public/leave-chat?nodeId=${encodeURIComponent(nodeId)}`;
+                const payload = JSON.stringify({});
+
                 try {
                     wsService.current?.disconnect?.();
                     wsService.current = null;
@@ -169,21 +181,23 @@ export const useChatNode = () => {
                     // Ignore disconnect errors
                 }
 
-                // 2) 언로드에서도 전송 가능한 방식으로 신호 보내기
                 if (navigator.sendBeacon) {
                     const blob = new Blob([payload], { type: 'application/json' });
                     navigator.sendBeacon(url, blob);
                 } else {
-                    // 구형 브라우저 폴백
                     fetch(url, {
                         method: 'POST',
                         body: payload,
                         headers: { 'Content-Type': 'application/json' },
-                        keepalive: true, // 언로드 중에도 시도
+                        keepalive: true,
                     });
                 }
             } catch (err) {
                 console.error('[CHAT] leaveRoomBeacon failed', err);
+
+                if (err instanceof EnvironmentVariableError) {
+                    toast.error('Chat service configuration error. Unable to properly disconnect.');
+                }
             }
         };
 
@@ -219,5 +233,6 @@ export const useChatNode = () => {
         isConnected: connectionStatus === 'connected',
         isJoining,
         isLeaving,
+        error,
     };
 };

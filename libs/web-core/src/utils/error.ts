@@ -142,3 +142,17 @@ export const handleAuthError = (error: any, shouldLogout: boolean, message?: str
 
     throw error;
 };
+
+export class EnvironmentVariableError extends Error {
+    constructor(varName: string) {
+        super(`Environment variable ${varName} is required but not set or empty`);
+        this.name = 'EnvironmentVariableError';
+    }
+}
+
+export const validateEnvVar = (varName: string, value: string) => {
+    if (!value || value.trim() === '') {
+        throw new EnvironmentVariableError(varName);
+    }
+    return value;
+};

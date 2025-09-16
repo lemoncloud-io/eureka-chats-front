@@ -1,8 +1,18 @@
-import { CHAT_API_ENDPOINT, webCore } from '@lemon/web-core';
+import { CHAT_API_ENDPOINT, validateChatApiEndpoint, webCore } from '@lemon/web-core';
 
-import type { ChatBody, ChatView, NodeBody, NodeView, RoomBody, RoomView } from '@lemoncloud/eureka-chats-api';
+import type {
+    ChatBody,
+    ChatView,
+    NodeBody,
+    NodeView,
+    RoomBody,
+    RoomView,
+    UserTokenView,
+} from '@lemoncloud/eureka-chats-api';
 
 export const createRoom = async (body: RoomBody) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
@@ -15,6 +25,8 @@ export const createRoom = async (body: RoomBody) => {
 };
 
 export const fetchRoom = async (roomId: string) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildRequest({
             method: 'GET',
@@ -27,19 +39,22 @@ export const fetchRoom = async (roomId: string) => {
 };
 
 export const enterRoom = async (body: NodeBody) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
-            baseURL: `${CHAT_API_ENDPOINT}/public/start-chat`,
+            baseURL: `${CHAT_API_ENDPOINT}/public/start-chat?token`,
         })
-        .setParams({ token: 0 })
         .setBody(body)
-        .execute<NodeView>();
+        .execute<UserTokenView>();
 
     return data;
 };
 
 export const sendMessage = async (body: ChatBody) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
@@ -52,6 +67,8 @@ export const sendMessage = async (body: ChatBody) => {
 };
 
 export const leaveRoom = async (nodeId: string) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildRequest({
             method: 'POST',
@@ -65,6 +82,8 @@ export const leaveRoom = async (nodeId: string) => {
 };
 
 export const updateNode = async (nodeId: string, connectionId: string) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildRequest({
             method: 'POST',

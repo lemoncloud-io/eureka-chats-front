@@ -10,6 +10,7 @@ import type { NodeView } from '@lemoncloud/eureka-chats-api';
 interface NicknameFormProps {
     onJoin: (nickname: string) => Promise<NodeView | undefined>;
     isJoining: boolean;
+    error?: string;
 }
 
 /**
@@ -20,7 +21,7 @@ interface NicknameFormProps {
  * @param {boolean} props.isJoining - Whether join operation is in progress
  * @returns {JSX.Element} Full-screen nickname input form
  */
-export const NicknameForm = ({ onJoin, isJoining }: NicknameFormProps) => {
+export const NicknameForm = ({ onJoin, isJoining, error }: NicknameFormProps) => {
     const { t } = useTranslation();
     const [nickname, setNickname] = useState('');
     const [isFocused, setIsFocused] = useState(false);
@@ -110,6 +111,11 @@ export const NicknameForm = ({ onJoin, isJoining }: NicknameFormProps) => {
                             </button>
                         </div>
                     </div>
+                    {error && (
+                        <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                            <p className="text-sm text-destructive">{error}</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

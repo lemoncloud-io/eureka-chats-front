@@ -8,14 +8,14 @@ import { useChatMessage, useChatNode } from '../hooks';
  * @returns {JSX.Element} Chat page with conditional rendering based on join status
  */
 export const ChatPage = () => {
-    const { node, messages, joinRoom, connectionStatus, leaveRoom, isJoining, isLeaving } = useChatNode();
+    const { node, messages, joinRoom, connectionStatus, leaveRoom, isJoining, isLeaving, error } = useChatNode();
     const { sendHttpMessage, isSending, pendingMessage } = useChatMessage(node?.id, node?.roomId);
 
     // Show nickname form if user hasn't joined yet
     if (!node) {
         return (
             <AppLayout>
-                <NicknameForm onJoin={joinRoom} isJoining={isJoining} />
+                <NicknameForm onJoin={joinRoom} isJoining={isJoining} error={error} />
             </AppLayout>
         );
     }
