@@ -1,4 +1,4 @@
-import { CHAT_API_ENDPOINT, webCore } from '@lemon/web-core';
+import { CHAT_API_ENDPOINT, validateChatApiEndpoint, webCore } from '@lemon/web-core';
 
 import type {
     ChatBody,
@@ -11,6 +11,8 @@ import type {
 } from '@lemoncloud/eureka-chats-api';
 
 export const createRoom = async (body: RoomBody) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
@@ -23,6 +25,8 @@ export const createRoom = async (body: RoomBody) => {
 };
 
 export const fetchRoom = async (roomId: string) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildRequest({
             method: 'GET',
@@ -35,6 +39,8 @@ export const fetchRoom = async (roomId: string) => {
 };
 
 export const enterRoom = async (body: NodeBody) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
@@ -47,6 +53,8 @@ export const enterRoom = async (body: NodeBody) => {
 };
 
 export const sendMessage = async (body: ChatBody) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildSignedRequest({
             method: 'POST',
@@ -59,6 +67,8 @@ export const sendMessage = async (body: ChatBody) => {
 };
 
 export const leaveRoom = async (nodeId: string) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildRequest({
             method: 'POST',
@@ -72,6 +82,8 @@ export const leaveRoom = async (nodeId: string) => {
 };
 
 export const updateNode = async (nodeId: string, connectionId: string) => {
+    validateChatApiEndpoint();
+
     const { data } = await webCore
         .buildRequest({
             method: 'POST',
